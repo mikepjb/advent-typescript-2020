@@ -12,7 +12,6 @@ const treeCheck = (map: Map, x: number, y: number): boolean => {
   return map[y][x] === '#'
 }
 
-
 const slopeA: Slope = {right: 1, down: 1}
 const slopeB: Slope = {right: 3, down: 1}
 const slopeC: Slope = {right: 5, down: 1}
