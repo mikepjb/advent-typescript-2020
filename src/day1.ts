@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-const expenseTotals: number[] = fs.readFileSync('data/day1-input.txt')
+const expenseTotals: number[] = fs.readFileSync('data/input1.txt')
   .toString()
   .split('\n')
   .map(t => parseInt(t))
