@@ -18,6 +18,7 @@ const processPolicy = (rawPolicy: string): PasswordPolicy => {
 }
 
 const validPasswords: string[] = []
+const validPasswordsForUpdatedPolicy: string[] = []
 
 rawPasswordEntries.map((entry) => {
   const [rawPolicy, password] = entry.split(': ')
@@ -28,7 +29,20 @@ rawPasswordEntries.map((entry) => {
   if (occurances >= policy.lowerRange && occurances <= policy.upperRange) {
     validPasswords.push(password)
   }
+
+  const firstOnly = policy.character === password[policy.lowerRange-1]
+    && policy.character !== password[policy.upperRange-1]
+
+  const secondOnly = policy.character !== password[policy.lowerRange-1]
+    && policy.character === password[policy.upperRange-1]
+
+  if (firstOnly || secondOnly) {
+    validPasswordsForUpdatedPolicy.push(password)
+  }
 })
 
 console.log(validPasswords)
 console.log(validPasswords.length)
+
+console.log(validPasswordsForUpdatedPolicy)
+console.log(validPasswordsForUpdatedPolicy.length)
