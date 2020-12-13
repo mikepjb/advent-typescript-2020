@@ -17,19 +17,48 @@ type Bag = {
 const parseRule = (line: string): Bag => {
   const [color, rulesString] = line.split(' bags contain ')
   const rules: ContentRules = []
-  rulesString.split(', ').map(s => {
-    const amountRaw = s.slice(0, s.indexOf(' '))
-    const amountColorRaw = s.slice(s.indexOf(' ')+1)
-    const amount = parseInt(amountRaw)
-    const amountColor = amountColorRaw.split(' bags')[0]
-    rules.push({color: amountColor, amount})
-  })
+
+  if (rulesString !== 'no other bags.') {
+    rulesString.split(', ').map(s => {
+      const amountRaw = s.slice(0, s.indexOf(' '))
+      const amountColorRaw = s.slice(s.indexOf(' ')+1)
+      const amount = parseInt(amountRaw)
+      const amountColor = amountColorRaw.split(' bag')[0]
+      rules.push({color: amountColor, amount})
+    })
+  }
+
   return {color, rules}
 }
 
-const bagRules: Bag[] = fs.readFileSync('data/input-7.txt')
+const canContain = (bagLookup: {[key: string]: Bag}, bag: Bag, childColor: Color): boolean => {
+  if (bag.rules.some(r => r.color === childColor)) {
+    return true
+  } else {
+    return bag.rules.some(r => canContain(bagLookup, bagLookup[r.color], childColor))
+  }
+}
+
+const bagRulesRaw: Bag[] = fs.readFileSync('data/input-7.txt')
   .toString()
   .split('\n').slice(0, -1)
   .map(l => parseRule(l))
 
-console.log(bagRules.slice(0, 5).map(r => JSON.stringify(r)))
+const bags: {[key: string]: Bag} = {}
+
+bagRulesRaw.forEach(rr => { bags[rr.color] = rr; })
+
+const targetColor = 'shiny gold'
+
+const validParentBags: Bag[] = []
+
+Object.keys(bags).map(c => {
+  const bag = bags[c]
+  console.log(bag)
+  if (canContain(bags, bag, targetColor)) {
+    validParentBags.push(bag)
+  }
+})
+
+console.log(validParentBags.map(b => b.color))
+console.log(validParentBags.length)
